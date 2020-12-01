@@ -1,6 +1,5 @@
 #include <iostream>
 #include<stdio.h>
-#include<stack>
 using namespace std;
 #define MaxSize 100
 typedef int Status;
@@ -31,7 +30,8 @@ typedef struct
 }SType;//构建栈
 Status map_slove(int x0,int y0,int xe,int ye)//x0->xe
 {
-    int i,j,k,di,find;//i,j,di坐标位置，k循环变量，find判断变量
+    int i,j,k,di;//i,j,di坐标位置，k循环变量
+    int find;//find是判断是否可走，0为初始状态，1为可走状态
     SType st;
     st.top=-1;//初始化栈顶
     st.top++;
@@ -49,7 +49,7 @@ Status map_slove(int x0,int y0,int xe,int ye)//x0->xe
             cout<<"迷宫路径如下"<<endl;
             for(k=0;k<=st.top;k++)
             {
-                printf("\t(%d,%d)",st.data[k].i,st.data[k].j);
+                printf("\t(%d,%d)→",st.data[k].i,st.data[k].j);
                 if((k+1)%5==0) cout<<endl;
             }
             cout<<endl;
@@ -59,7 +59,7 @@ Status map_slove(int x0,int y0,int xe,int ye)//x0->xe
         while(di<4&&find==0)//开始寻找方向
         {
             di++;
-            switch(di)
+            switch(di)//上右下左寻找路径
             {
             case 0://向上走
                 i=st.data[st.top].i-1;
