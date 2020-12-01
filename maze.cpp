@@ -22,63 +22,120 @@ typedef struct
 {
     int i;
     int j;
-    int dir; //é¡ºæ—¶é’ˆ0ä¸Šï¼Œ3å·¦
-}point;//å­˜å‚¨èŠ‚ç‚¹
+    int dir; //Ë³Ê±Õë²éÕÒ·½Ïò
+}point;//´æ´¢½Úµã
 typedef struct
 {
     point data[MaxSize] ;
     int top;
-}SType;//æ„å»ºæ ˆ
-Status map_slove(int x0,int y0,int xe,int ye)
+}SType;//¹¹½¨Õ»
+Status map_slove(int x0,int y0,int xe,int ye)//x0->xe
 {
-    int i,j,k,di,find;//i,j,diæ˜¯ä½ç½®ï¼Œkæ˜¯å¾ªç¯å˜é‡ï¼Œfindæ˜¯åˆ¤æ–­å˜é‡
+    int i,j,k,di,find;//i,j,di×ø±êÎ»ÖÃ£¬kÑ­»·±äÁ¿£¬findÅĞ¶Ï±äÁ¿
     SType st;
-    st.top=-1;//åˆå§‹åŒ–æ ˆ
+    st.top=-1;//³õÊ¼»¯Õ»¶¥
     st.top++;
-    st.data[st.top].i=x0;//åˆå§‹åæ ‡è®¾ç½®
+    st.data[st.top].i=x0;//³õÊ¼»¯×ø±êÎ»ÖÃ
     st.data[st.top].j=y0;
     st.data[st.top].dir=-1;
     maze_map[x0][y0]=-1;
-    while (st.top>-1)//æ ˆä¸ç©ºæ—¶å¾ªç¯
+    while (st.top>-1)//Õ»²»¿ÕÊ±ÈëÕ»
     {
-        i=st.data[st.top].i;//è®¾ç½®èµ·ç‚¹
+        i=st.data[st.top].i;//ÉèÖÃÆğµã
         j=st.data[st.top].j;
         di=st.data[st.top].dir;
-        if (i==xe&&j==ye)//æ‰¾åˆ°ç»ˆç‚¹,å¼¹å‡ºæ ˆå†…å…ƒç´ 
+        if (i==xe&&j==ye)//ÕÒµ½ÖÕµã,µ¯³öÕ»ÄÚÔªËØ
         {
-            cout<<"è¿·å®«è·¯å¾„å¦‚ä¸‹"<<endl;
+            cout<<"ÃÔ¹¬Â·¾¶ÈçÏÂ"<<endl;
             for(k=0;k<=st.top;k++)
             {
-                cout<<"\t"<<"("<<st.data[k].i,st.data[k].j<<")";
+                printf("\t(%d,%d)",st.data[k].i,st.data[k].j);
                 if((k+1)%5==0) cout<<endl;
             }
             cout<<endl;
             return 0;
         }
-        find=0;//ä»0å¼€å§‹å¯»æ‰¾
-        while(di<4&&find==0)
+        find=0;//¿ªÊ¼Ñ°ÕÒÂ·¾¶
+        while(di<4&&find==0)//¿ªÊ¼Ñ°ÕÒ·½Ïò
         {
             di++;
-            if (di==0)
+            switch(di)
             {
+            case 0://ÏòÉÏ×ß
                 i=st.data[st.top].i-1;
                 j=st.data[st.top].j;
                 break;
-            }
-            if (di==1)
-            {
+            case 1://ÏòÓÒ×ß
                 i=st.data[st.top].i;
                 j=st.data[st.top].j+1;
                 break;
-            }
-            if(di==2)
-            {
+            case 2://ÏòÏÂ×ß
                 i=st.data[st.top].i+1;
-                j=
+                j=st.data[st.top].j;
+                break;
+            case 3://Ïò×ó×ß
+                i=st.data[st.top].i;
+                j=st.data[st.top].j-1;
+                break;
+            }
+            if(maze_map[i][j]==0) find=1;
+        }
+        if(find==1)//ÓĞÂ·
+        {
+            st.data[st.top].dir=di;
+            st.top++;//¼ÓÕ»
+            st.data[st.top].i=i;
+            st.data[st.top].j=j;
+            st.data[st.top].dir=-1;//ÖØÖÃ·½Ïò
+            maze_map[i][j]=-1;//±ê¼Ç
+        }
+        else//ËÀÂ·
+        {
+            maze_map[st.data[st.top].i][st.data[st.top].j]=0;//ÍË¸ñ
+            st.top--;//ÍËÕ»
+        }
+    }
+    return (0);
+}
+int main()
+{
+    int x,y,k,t;
+    cout<<"ÖÕµã×ø±êÎª£¨8,8£©"<<endl;
+    while(1)
+    {
+        cout<<"ÇëÊäÈëÆğµã×ø±ê"<<endl;
+        cout<<"ºá×ø±ê·¶Î§ 0~9£¬×İ×ø±ê·¶Î§£º0~9"<<endl;
+        cin>>x>>y;
+        if(maze_map[x][y]==1)
+        {
+            cout<<"¸Ã×ø±êÎªÕÏ°­£¬ÇëÖØĞÂÊäÈë"<<endl;
+        }
+        else{
+            break;
+        }
+    }
+    map_slove(x,y,M,N);
+    cout<<"Í¼Ïñ±íÊ¾Îª£º"<<endl;
+    for(t=0;t<10;t++)
+    {
+        cout<<"\t\t";
+        for(k=0;k<10;k++)
+        {
+            if(maze_map[t][k]==1)
+            {
+                cout<<"#";
+            }else if(maze_map[t][k]==0)
+            {
+                cout<<" ";
+            }else{
+                printf("o");
             }
         }
-
+        if(k==10) cout<<endl;
     }
-
+    cout<<"oÎªÂ·¾¶"<<endl;
+    int tmp;
+    cin>>tmp;
+    return 0;
 }
 
