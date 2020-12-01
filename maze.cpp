@@ -1,7 +1,10 @@
 #include <iostream>
+#include<vector>
 #include<stdio.h>
 using namespace std;
 #define MaxSize 100
+#define WALL 0
+#define ROUTE 1
 typedef int Status;
 #define M 8
 #define N 8
@@ -17,13 +20,13 @@ Status maze_map[M+2][N+2]={
     {1,1,0,0,0,0,0,0,0,1},
     {1,1,1,1,1,1,1,1,1,1}
 };
-typedef struct 
+typedef struct //每个结点
 {
     int i;
     int j;
     int dir; //顺时针查找方向
 }point;//存储节点
-typedef struct
+typedef struct//栈定义
 {
     point data[MaxSize] ;
     int top;
