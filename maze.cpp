@@ -7,7 +7,7 @@ using namespace std;
 #define WALL 0
 #define ROUTE 1
 typedef int Status;
-#define N 20
+int N;
 typedef struct //每个结点
 {
     int i;
@@ -24,9 +24,9 @@ Status map_slove(vector<vector<int>> &maze_map,int x0,int y0)//求解函数x0->xe,y0
     int xe;int ye;
     if (maze_map[N-3][N-4]==ROUTE)
     {
-        xe=N-2;ye=N-2;
+        xe=N-2;ye=N-3;
     }
-    if(maze_map[N-2][N-3]!=ROUTE)
+    if(maze_map[N-2][N-4]!=ROUTE)
     {
         cout<<"无解"<<endl;
         return (0);
@@ -154,6 +154,8 @@ void printMaze(vector<vector<int>> &maze_map)//打印迷宫
 }
 int main()
 {
+    do{cout<<"请选择迷宫规模（10~30）:";
+    cin>>N;}while(N<10||N>30);
     srand((unsigned)time(NULL));
     vector<vector<int>> maze_map(N,vector<int>(N,WALL));
     for(int i=0;i<N;++i)//保证最外面一层不会挖穿
@@ -165,9 +167,10 @@ int main()
     }
     cout<<"请稍等，正在随机生成迷宫，左上角为入口，右下角为出口"<<endl;
     dig(maze_map,2,1);//开始挖的位置
-    if(maze_map[N-3][N-3])
+    maze_map[N-2][N-3]==ROUTE;
+    if(maze_map[N-3][N-4])
     {
-        maze_map[N-2][N-3]=ROUTE;
+        maze_map[N-2][N-4]=ROUTE;
     }
     else if (maze_map[N-3][N-4]==ROUTE)
     {
