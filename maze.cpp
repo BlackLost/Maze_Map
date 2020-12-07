@@ -19,8 +19,18 @@ typedef struct//栈定义
     point data[MaxSize] ;
     int top;
 }SType;//构建栈
-Status map_slove(vector<vector<int>> &maze_map,int x0,int y0,int xe,int ye)//求解函数
+Status map_slove(vector<vector<int>> &maze_map,int x0,int y0)//求解函数x0->xe,y0->ye
 {
+    int xe;int ye;
+    if (maze_map[N-3][N-4]==ROUTE)
+    {
+        xe=N-2;ye=N-2;
+    }
+    if(maze_map[N-2][N-3]!=ROUTE)
+    {
+        cout<<"无解"<<endl;
+        return (0);
+    }
     int i,j,k,di;//i,j,di坐标位置，k循环变量
     int find;//find是判断是否可走，0为初始状态，1为可走状态
     SType st;
@@ -95,11 +105,7 @@ void dig(vector<vector<int>> &maze_map,int x ,int y)//挖掘函数
         if(maze_map[x+1][y]+maze_map[x-1][y]+maze_map[x][y-1]+maze_map[x][y+1]<=ROUTE)//上下左右小于等于1条通路，该点标记为通路
         {
             maze_map[x][y]=ROUTE;
-            if(x+2==N-1&&y+2==N-1)
-            {
-                maze_map[x+1][y]=ROUTE;
-                return;
-            }
+
             int dir[4]={0,1,2,3};
             for(int i=4;i>0;--i)
             {
@@ -136,6 +142,7 @@ void printMaze(vector<vector<int>> &maze_map)//打印迷宫
             {
                 cout << "  ";
             }
+
             else
             {
                 cout << "国";
@@ -156,11 +163,21 @@ int main()
         maze_map[i][0]=ROUTE;
         maze_map[0][i]=ROUTE;
     }
+    cout<<"请稍等，正在随机生成迷宫，左上角为入口，右下角为出口"<<endl;
     dig(maze_map,2,1);//开始挖的位置
+    if(maze_map[N-3][N-3])
+    {
+        maze_map[N-2][N-3]=ROUTE;
+    }
+    else if (maze_map[N-3][N-4]==ROUTE)
+    {
+        maze_map[N-2][N-4]==ROUTE;
+    }
+    cout<<"已生成迷宫"<<endl;
     printMaze(maze_map);
+    map_slove(maze_map,2,1);
 
-
-
+    cout<<"输入任意字符关闭窗口"<<endl;
     int tmp;
     cin>>tmp;
     return 0;
