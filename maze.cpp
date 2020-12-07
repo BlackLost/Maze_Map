@@ -1,25 +1,13 @@
 #include <iostream>
 #include<vector>
 #include<stdio.h>
+#include<time.h>
 using namespace std;
 #define MaxSize 100
 #define WALL 0
 #define ROUTE 1
 typedef int Status;
-#define M 8
-#define N 8
-Status maze_map[M+2][N+2]={
-    {1,1,1,1,1,1,1,1,1,1},
-    {1,0,0,1,0,0,0,1,0,1},
-    {1,0,0,1,0,0,0,1,0,1},
-    {1,0,0,0,0,1,1,0,0,1},
-    {1,0,1,1,1,0,0,0,0,1},
-    {1,0,0,0,1,0,0,0,0,1},
-    {1,0,1,0,0,0,1,0,0,1},
-    {1,0,1,1,1,0,1,1,0,1},
-    {1,1,0,0,0,0,0,0,0,1},
-    {1,1,1,1,1,1,1,1,1,1}
-};
+#define N 20
 typedef struct //每个结点
 {
     int i;
@@ -31,7 +19,7 @@ typedef struct//栈定义
     point data[MaxSize] ;
     int top;
 }SType;//构建栈
-Status map_slove(int x0,int y0,int xe,int ye)//x0->xe
+Status map_slove(vector<vector<int>> &maze_map,int x0,int y0,int xe,int ye)//求解函数
 {
     int i,j,k,di;//i,j,di坐标位置，k循环变量
     int find;//find是判断是否可走，0为初始状态，1为可走状态
@@ -100,43 +88,79 @@ Status map_slove(int x0,int y0,int xe,int ye)//x0->xe
     }
     return (0);
 }
-int main()
+void dig(vector<vector<int>> &maze_map,int x ,int y)//挖掘函数
 {
-    int x,y,k,t;
-    cout<<"终点坐标为（8,8）"<<endl;
-    while(1)
+    if (maze_map[x][y]==WALL)
     {
-        cout<<"请输入起点坐标"<<endl;
-        cout<<"横坐标范围 0~9，纵坐标范围：0~9"<<endl;
-        cin>>x>>y;
-        if(maze_map[x][y]==1)
+        if(maze_map[x+1][y]+maze_map[x-1][y]+maze_map[x][y-1]+maze_map[x][y+1]<=ROUTE)//上下左右小于等于1条通路，该点标记为通路
         {
-            cout<<"该坐标为障碍，请重新输入"<<endl;
-        }
-        else{
-            break;
-        }
-    }
-    map_slove(x,y,M,N);
-    cout<<"图像表示为："<<endl;
-    for(t=0;t<10;t++)
-    {
-        cout<<"\t\t";
-        for(k=0;k<10;k++)
-        {
-            if(maze_map[t][k]==1)
+            maze_map[x][y]=ROUTE;
+            if(x+2==N-1&&y+2==N-1)
             {
-                cout<<"#";
-            }else if(maze_map[t][k]==0)
+                maze_map[x+1][y]=ROUTE;
+                return;
+            }
+            int dir[4]={0,1,2,3};
+            for(int i=4;i>0;--i)
             {
-                cout<<" ";
-            }else{
-                printf("o");
+                int _rand_ =rand()%i;//随机变量
+                swap(dir[_rand_],dir[i-1]);//设置随机挖掘方向
+                switch (dir[i-1])
+                {
+                case 0:
+                    dig(maze_map,x-1,y);
+                    break;
+                case 1:
+                    dig(maze_map,x+1,y);
+                    break;                
+                case 2:
+                    dig(maze_map,x,y-1);
+                    break;
+                case 3:
+                    dig(maze_map,x,y+1);
+                    break;
+                default:
+                    break;
+                }
             }
         }
-        if(k==10) cout<<endl;
     }
-    cout<<"o为路径"<<endl;
+}
+void printMaze(vector<vector<int>> &maze_map)//打印迷宫
+{
+    for (int i = 0; i < N; ++i)
+    {
+        for (int j = 0; j < N; ++j)
+        {
+            if (maze_map[i][j] == ROUTE)
+            {
+                cout << "  ";
+            }
+            else
+            {
+                cout << "国";
+            }
+        }
+        cout << endl;
+    }
+    cout << endl;
+}
+int main()
+{
+    srand((unsigned)time(NULL));
+    vector<vector<int>> maze_map(N,vector<int>(N,WALL));
+    for(int i=0;i<N;++i)//保证最外面一层不会挖穿
+    {
+        maze_map[i][N-1]=ROUTE;
+        maze_map[N-1][i]=ROUTE;
+        maze_map[i][0]=ROUTE;
+        maze_map[0][i]=ROUTE;
+    }
+    dig(maze_map,2,1);//开始挖的位置
+    printMaze(maze_map);
+
+
+
     int tmp;
     cin>>tmp;
     return 0;
