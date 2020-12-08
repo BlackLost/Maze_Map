@@ -24,9 +24,9 @@ Status map_slove(vector<vector<int>> &maze_map,int x0,int y0)//求解函数x0->xe,y0
     int xe;int ye;
     if (maze_map[N-3][N-4]==ROUTE)
     {
-        xe=N-2;ye=N-3;
+        xe=N-3;ye=N-4;
     }
-    if(maze_map[N-2][N-4]!=ROUTE)
+    if(maze_map[N-3][N-4]!=ROUTE)
     {
         cout<<"无解"<<endl;
         return (0);
@@ -51,6 +51,7 @@ Status map_slove(vector<vector<int>> &maze_map,int x0,int y0)//求解函数x0->xe,y0
             for(k=0;k<=st.top;k++)
             {
                 printf("\t(%d,%d)→",st.data[k].i,st.data[k].j);
+                maze_map[st.data[k].i][st.data[k].j]=-2;
                 if((k+1)%5==0) cout<<endl;
             }
             cout<<endl;
@@ -79,7 +80,7 @@ Status map_slove(vector<vector<int>> &maze_map,int x0,int y0)//求解函数x0->xe,y0
                 j=st.data[st.top].j-1;
                 break;
             }
-            if(maze_map[i][j]==0) find=1;
+            if(maze_map[i][j]==ROUTE) find=1;
         }
         if(find==1)//有路
         {
@@ -92,7 +93,7 @@ Status map_slove(vector<vector<int>> &maze_map,int x0,int y0)//求解函数x0->xe,y0
         }
         else//死路
         {
-            maze_map[st.data[st.top].i][st.data[st.top].j]=0;//退格
+            maze_map[st.data[st.top].i][st.data[st.top].j]=-1;//退格
             st.top--;//退栈
         }
     }
@@ -138,35 +139,26 @@ void printMaze(vector<vector<int>> &maze_map)//打印迷宫
     {
         for (int j = 0; j < N; ++j)
         {
-            if (maze_map[i][j] == ROUTE)
+            if (maze_map[i][j] == ROUTE||maze_map[i][j]==-1)
             {
-                cout << "  ";
+                cout << " ";
+            }
+            else if (maze_map[i][j]==-2)
+            {
+                cout<<"O";
             }
 
             else
             {
-                cout << "国";
+                cout << "#";
             }
         }
         cout << endl;
     }
     cout << endl;
 }
-int main()
+void init_maze (vector<vector<int>> &maze_map)
 {
-    do{cout<<"请选择迷宫规模（10~30）:";
-    cin>>N;}while(N<10||N>30);
-    srand((unsigned)time(NULL));
-    vector<vector<int>> maze_map(N,vector<int>(N,WALL));
-    for(int i=0;i<N;++i)//保证最外面一层不会挖穿
-    {
-        maze_map[i][N-1]=ROUTE;
-        maze_map[N-1][i]=ROUTE;
-        maze_map[i][0]=ROUTE;
-        maze_map[0][i]=ROUTE;
-    }
-    cout<<"请稍等，正在随机生成迷宫，左上角为入口，右下角为出口"<<endl;
-    dig(maze_map,2,1);//开始挖的位置
     maze_map[N-2][N-3]==ROUTE;
     if(maze_map[N-3][N-4])
     {
@@ -176,10 +168,36 @@ int main()
     {
         maze_map[N-2][N-4]==ROUTE;
     }
+}
+int main()
+{
+    do{cout<<"请选择迷宫规模（10~28）:";
+    cin>>N;}while(N<10||N>=28);
+    srand((unsigned)time(NULL));
+    vector<vector<int>> maze_map(N,vector<int>(N,WALL));
+    for(int i=0;i<N;++i)//保证最外面一层不会挖穿
+    {
+        maze_map[i][N-1]=ROUTE;
+        maze_map[N-1][i]=ROUTE;
+        maze_map[i][0]=ROUTE;
+        maze_map[0][i]=ROUTE;
+    }
+    cout<<"请稍等，正在随机生成迷宫，左上角为入口，右下角为出口，“#”是墙壁，“O”是求解通路"<<endl;
+    dig(maze_map,2,2);//开始挖的位置
+    init_maze(maze_map);
     cout<<"已生成迷宫"<<endl;
     printMaze(maze_map);
-    map_slove(maze_map,2,1);
-
+    for(int i=1;i<=N-2;i++)//防止走边路
+    {
+        maze_map[i][N-2]=WALL;
+        maze_map[N-2][i]=WALL;
+        maze_map[1][i]=WALL;
+        maze_map[i][1]=WALL;
+    }
+    
+    map_slove(maze_map,2,2);
+    maze_map[N-2][N-4]=-2;
+    printMaze(maze_map);
     cout<<"输入任意字符关闭窗口"<<endl;
     int tmp;
     cin>>tmp;
